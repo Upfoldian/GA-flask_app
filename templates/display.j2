@@ -1,0 +1,26 @@
+<html>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+
+    google.charts.setOnLoadCallback(drawTable);
+    function drawTable() {
+      var json_table = new google.visualization.LineChart(document.getElementById('table_div_json'));
+      var json_data = new google.visualization.DataTable({{chartJSON}}, 0.2);
+
+      var options = {
+        title: 'Company Performance',
+        legend: { position: 'bottom' },
+        width: 900,
+        height: 500
+      };
+
+      json_table.draw(json_data, options);
+    }
+
+  </script>
+  <body>
+    <H1>Current Data</H1>
+    <div id="table_div_json"></div>
+  </body>
+</html>
