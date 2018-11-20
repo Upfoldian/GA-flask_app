@@ -5,14 +5,15 @@
 
     google.charts.setOnLoadCallback(drawTable);
     function drawTable() {
-      var json_table = new google.visualization.LineChart(document.getElementById('table_div_json'));
+      var json_table = new google.visualization.LineChart(document.getElementById('staticData'));
       var json_data = new google.visualization.DataTable({{chartJSON}}, 0.2);
 
       var options = {
-        title: 'Company Performance',
+        title: 'Tracked and Untracked Solar Panel Comparison (Voltage)',
         legend: { position: 'bottom' },
-        width: 900,
-        height: 600
+        width: 1000,
+        height: 500,
+        interpolateNulls: true
       };
 
       json_table.draw(json_data, options);
@@ -20,9 +21,9 @@
 
   </script>
   <body>
-    <center>
-      <H1>Uploaded Data</H1>
-      <div id="table_div_json"></div>
-    </center>
+    <H1>Static Data Test</H1>
+    <div id="staticData"></div>
+    <H1>Upload Data Test</H1>
+    <div id="uploadData"></div>
   </body>
 </html>
