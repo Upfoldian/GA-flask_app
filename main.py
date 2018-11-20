@@ -1,44 +1,31 @@
-from flask import Flask, render_template
-import gviz_api
-import csv
-
+from flask import *
+from helperlib import csvToChartJSON, updateUploadCSV, getUploadDict
 from datetime import datetime
-from pytz import timezone
+import csv
+import gviz_api
+
 
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET'])
+#Offloaded the code to read in my existing dataset to staticHelp module. Since this is just a day project, I haven't done any error checking, but I should if I intend to use this over thingspeak.
+staticJSON = csvToChartJSON('thursday test.csv')
+@app.route('/', methods = ['GET', 'POST'])
 def display_data():
-	solarDesc = {"time": ("datetime", "Time"), "trackV": ("number", "Tracked Voltage"), "untrackV": ("number", "Untracked Voltage")}
-	solarData = [];
-	with open('thursday test.csv') as csvfile:
-		#fieldnames = ['created_at','entry_id','people','temp','humid','trackV','trackI','untrackV','untrackI','motorpos' ]
-		reader = csv.DictReader(csvfile)
-		for row in reader:
-			time = datetime.strptime(row['created_at'],  "%Y-%m-%d %H:%M:%S %Z").replace(tzinfo=timezone('UTC'))
-			time = time.astimezone(timezone('Australia/Sydney'))
-			trackV = row['trackV']
-			untrackV = row['untrackV']
-
-			if trackV != "":
-				trackV = int(trackV)
-			else:
-				trackV = None
-
-			if untrackV != "":
-				untrackV = int(untrackV)
-			else:
-				untrackV = None
 
 
+	if request.method == 'GET':
+		uploadDesc = {"time": ("datetime", "Time"), "value": ("number", "value")}
+		uploadData = getUploadDict('upload.csv')
+		data_table = gviz_api.DataTable(uploadDesc)
+		data_table.LoadData(uploadData)
+		uploadJSON = data_table.ToJSon(columns_order=("time", "value"), order_by="time")
+  		return render_template('display.j2', static=staticJSON, upload=uploadJSON)
+  	elif request.method == 'POST':
+  		value = int(request.form['value'])
+  		updateUploadCSV('upload.csv', datetime.now(), value)
+		return 'uploaded value %d' % value
+  	else:
+  		return 'how did you get here?'
 
-			solarData.append({"time": time, "trackV": trackV, "untrackV": untrackV})
-	data_table = gviz_api.DataTable(solarDesc)
-	data_table.LoadData(solarData)
-  	json = data_table.ToJSon(columns_order=("time", "trackV", "untrackV"), order_by="time")
-  	return render_template('display.j2', chartJSON=json)
-
-@app.route('/', methods = ['POST'])
-def save_data():
-	#Do some stuff
-	return 'POST'
+if __name__ == '__main__':
+    app.run(debug=True, port=5000) #run app in debug mode on port 5000 

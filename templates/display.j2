@@ -1,13 +1,15 @@
 <html>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript">
+    //Load Chart
     google.charts.load('current', {'packages':['corechart']});
 
-    google.charts.setOnLoadCallback(drawTable);
-    function drawTable() {
-      var json_table = new google.visualization.LineChart(document.getElementById('staticData'));
-      var json_data = new google.visualization.DataTable({{chartJSON}}, 0.2);
-
+    google.charts.setOnLoadCallback(drawStaticChart);
+    google.charts.setOnLoadCallback(drawUploadChart);
+    //Static chart draw
+    function drawStaticChart() {
+      var chartData = new google.visualization.DataTable({{static}});
+      var chart = new google.visualization.LineChart(document.getElementById('staticData'));
       var options = {
         title: 'Tracked and Untracked Solar Panel Comparison (Voltage)',
         legend: { position: 'bottom' },
@@ -15,12 +17,23 @@
         height: 500,
         interpolateNulls: true
       };
-
-      json_table.draw(json_data, options);
+      chart.draw(chartData, options);
     }
-
+    function drawUploadChart() {
+      var chartData = new google.visualization.DataTable({{upload}});
+      var chart = new google.visualization.LineChart(document.getElementById('uploadData'));
+      var options = {
+        title: "POST'd data",
+        legend: { position: 'bottom' },
+        width: 1000,
+        height: 500,
+        interpolateNulls: true
+      };
+      chart.draw(chartData, options);
+    }
   </script>
   <body>
+    <span id="Intro">This is a quick little project I did over the course of a day to muck around with flask. <a href="https://github.com/Upfoldian/GA-flask_app">Check out the repo!</a></span>
     <H1>Static Data Test</H1>
     <div id="staticData"></div>
     <H1>Upload Data Test</H1>
