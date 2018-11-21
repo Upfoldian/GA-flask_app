@@ -28,4 +28,4 @@ def display_data():
   		return 'how did you get here?'
 
 if __name__ == '__main__':
-    app.run(port=80) #run app in debug mode on port 5000 
+    app.run(port=5000) #run app in debug mode on port 5000 
